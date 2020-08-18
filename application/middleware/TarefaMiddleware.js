@@ -7,9 +7,8 @@ const TarefaMiddleware = async (request, response, next) => {
 
     const { categoria, titulo, descricao, dataHoraExecucao, descricaoDispositivo } = request.body;
 
-    // TODO: Implementar validacao para todos os campos
     if(!descricaoDispositivo) {
-        return response.status(400).json( {Mensagem: "O campo '\DescricaoDispositovo\' é obrigatório!"} );
+        return response.status(400).json( {Mensagem: "O campo '\DescricaoDispositivo\' é obrigatório!"} );
     } else if(!categoria) {
         return response.status(400).json( {Mensagem: "O campo ('\Categoria\') deve ser informado!"} );
     } else if(!titulo) {
@@ -22,11 +21,22 @@ const TarefaMiddleware = async (request, response, next) => {
         return response.status(401).json( {Mensagem: "A data não pode ser anterior a data atual!"} );
     } else {
 
-        let isExistTarefaDataHora = await TarefaModel.findOne( 
-            { 
-                "dataHoraExecucao": {"$eq": new Date(dataHoraExecucao)}, 
-                "descricaoDispositivo": {"$in": descricaoDispositivo}
-            });
+        let isExistTarefaDataHora = null;
+
+        if(request.params.id) {
+            isExistTarefaDataHora = await TarefaModel.findOne(
+                { 
+                    "_id": { "$ne": request.params.id }, // Retirar uma determiada tarefa a sera atualizada
+                    "dataHoraExecucao": {"$eq": new Date(dataHoraExecucao)}, 
+                    "descricaoDispositivo": {"$in": descricaoDispositivo}
+                });
+        } else {
+            isExistTarefaDataHora = await TarefaModel.findOne( 
+                { 
+                    "dataHoraExecucao": {"$eq": new Date(dataHoraExecucao)}, 
+                    "descricaoDispositivo": {"$in": descricaoDispositivo}
+                });
+        }
 
         if(isExistTarefaDataHora) {
             return response.status(401).json( {Mensagem: "Já existe uma tarefa nessa mesma data e horário cadastrada!"} );
