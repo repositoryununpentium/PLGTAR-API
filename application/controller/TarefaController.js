@@ -1,5 +1,17 @@
 const TarefaModel = require("../model/TarefaModel");
 
+const dataHoraAtual = new Date();
+
+const { 
+    startOfDay, 
+    endOfDay, 
+    startOfWeek, 
+    endOfWeek,
+    startOfMonth,
+    endOfMonth,
+    startOfYear,
+    endOfYear } = require("date-fns");
+
 class TarefaController {
 
     async persist(request, response) {
@@ -91,6 +103,86 @@ class TarefaController {
         } catch (errorController) {
             console.log(errorController);
             return response.status(500).json(errorController);
+        }
+    };
+    
+    async recuperarTarefasAtrasadas(request, response) { 
+        try {
+            await TarefaModel.find({
+                "dataHoraExecucao": { "$lt": dataHoraAtual }, // $lt - Menor que a data atual...
+                "descricaoDispositivo": { "$in": request.body.descricaoDispositivo }
+            })
+            .sort("dataHoraExecucao")
+            .then(responseController => {
+                return response.status(200).json( responseController );
+            });
+        } catch( errorController ) {
+            console.log(errorController);
+            return response.status(500).json(errorController);
+        }
+    };
+
+    async recuperarTarefasDia(request, response) {
+        try {
+            await TarefaModel.find({
+                "descricaoDispositivo": { "$in": request.body.descricaoDispositivo },
+                "dataHoraExecucao": { "$gte": startOfDay(dataHoraAtual), "$lte": endOfDay(dataHoraAtual) }
+            })
+            .sort("dataHoraExecucao")
+            .then( responseController => {
+                return response.status(200).json(responseController);
+            });
+        } catch( errorController ) {
+            console.log(errorController);
+            return response.status(500).json( errorController );
+        }
+    };
+
+    async recuperarTarefasSemana(request, response) {
+        try {
+            await TarefaModel.find({
+                "descricaoDispositivo": { "$in": request.body.descricaoDispositivo },
+                "dataHoraExecucao": { "$gte": startOfWeek(dataHoraAtual), "$lte": endOfWeek(dataHoraAtual) }
+            })
+            .sort("dataHoraExecucao")
+            .then( responseController => {
+                return response.status(200).json(responseController);
+            });
+        } catch( errorController ) {
+            console.log(errorController);
+            return response.status(500).json( errorController );
+        }
+    };
+
+    async recuperarTarefasMes(request, response) {
+        try {
+            await TarefaModel.find({
+                "descricaoDispositivo": { "$in": request.body.descricaoDispositivo },
+                "dataHoraExecucao": { "$gte": startOfMonth(dataHoraAtual), "$lte": endOfMonth(dataHoraAtual) }
+            })
+            .sort("dataHoraExecucao")
+            .then( responseController => {
+                return response.status(200).json(responseController);
+            });
+        } catch( errorController ) {
+            console.log(errorController);
+            return response.status(500).json( errorController );
+        }
+    };
+
+    async recuperarTarefasAno(request, response) {
+        try {
+            await TarefaModel.find({
+                "descricaoDispositivo": { "$in": request.body.descricaoDispositivo },
+                "dataHoraExecucao": { "$gte": startOfYear(dataHoraAtual), "$lte": endOfYear(dataHoraAtual) }
+            })
+            .sort("dataHoraExecucao")
+            .then( responseController => {
+                return response.status(200).json(responseController);
+            });
+        } catch( errorController ) {
+            console.log(errorController);
+            return response.status(500).json( errorController );
         }
     };
 
