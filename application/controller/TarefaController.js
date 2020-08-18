@@ -52,6 +52,9 @@ class TarefaController {
     };
 
     async findDescricaoDispositivo(request, response) {
+        console.log(request.body.descricaoDispositivo);
+        console.log("");
+        console.log(request.params.descricaoDispositivo);
         try {
             await TarefaModel.find({ descricaoDispositivo: { $in: request.body.descricaoDispositivo } })
                 .sort('dataHoraExecucao')
@@ -125,7 +128,7 @@ class TarefaController {
     async recuperarTarefasDia(request, response) {
         try {
             await TarefaModel.find({
-                "descricaoDispositivo": { "$in": request.body.descricaoDispositivo },
+                "descricaoDispositivo": { "$in": request.params.descricaoDispositivo },
                 "dataHoraExecucao": { "$gte": startOfDay(dataHoraAtual), "$lte": endOfDay(dataHoraAtual) }
             })
             .sort("dataHoraExecucao")
@@ -141,7 +144,7 @@ class TarefaController {
     async recuperarTarefasSemana(request, response) {
         try {
             await TarefaModel.find({
-                "descricaoDispositivo": { "$in": request.body.descricaoDispositivo },
+                "descricaoDispositivo": { "$in": request.params.descricaoDispositivo },
                 "dataHoraExecucao": { "$gte": startOfWeek(dataHoraAtual), "$lte": endOfWeek(dataHoraAtual) }
             })
             .sort("dataHoraExecucao")
@@ -157,7 +160,7 @@ class TarefaController {
     async recuperarTarefasMes(request, response) {
         try {
             await TarefaModel.find({
-                "descricaoDispositivo": { "$in": request.body.descricaoDispositivo },
+                "descricaoDispositivo": { "$in": request.params.descricaoDispositivo },
                 "dataHoraExecucao": { "$gte": startOfMonth(dataHoraAtual), "$lte": endOfMonth(dataHoraAtual) }
             })
             .sort("dataHoraExecucao")
@@ -173,7 +176,7 @@ class TarefaController {
     async recuperarTarefasAno(request, response) {
         try {
             await TarefaModel.find({
-                "descricaoDispositivo": { "$in": request.body.descricaoDispositivo },
+                "descricaoDispositivo": { "$in": request.params.descricaoDispositivo },
                 "dataHoraExecucao": { "$gte": startOfYear(dataHoraAtual), "$lte": endOfYear(dataHoraAtual) }
             })
             .sort("dataHoraExecucao")
