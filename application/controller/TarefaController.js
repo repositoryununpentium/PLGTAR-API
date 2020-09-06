@@ -109,11 +109,11 @@ class TarefaController {
         }
     };
     
-    async recuperarTarefasAtrasadas(request, response) { 
+    async recuperarTarefasAtrasadas(request, response) {
         try {
             await TarefaModel.find({
                 "dataHoraExecucao": { "$lt": dataHoraAtual }, // $lt - Menor que a data atual...
-                "descricaoDispositivo": { "$in": request.body.descricaoDispositivo }
+                "descricaoDispositivo": { "$in": request.params.descricaoDispositivo }
             })
             .sort("dataHoraExecucao")
             .then(responseController => {

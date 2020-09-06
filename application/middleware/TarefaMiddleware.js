@@ -17,8 +17,6 @@ const TarefaMiddleware = async (request, response, next) => {
         return response.status(400).json( {Mensagem: "O campo ('\Descrição\') deve ser informado!"} );
     } else if(!dataHoraExecucao) {
         return response.status(400).json( {Mensagem: "O campo ('\Data Hora da Execução\') deve ser informado!"} );
-    } else if(isPast(new Date(dataHoraExecucao))) {
-        return response.status(401).json( {Mensagem: "A data não pode ser anterior a data atual!"} );
     } else {
 
         let isExistTarefaDataHora = null;
@@ -31,6 +29,9 @@ const TarefaMiddleware = async (request, response, next) => {
                     "descricaoDispositivo": {"$in": descricaoDispositivo}
                 });
         } else {
+            if(isPast(new Date(dataHoraExecucao))) {
+                return response.status(401).json( {Mensagem: "A data não pode ser anterior a data atual!"} );
+            }
             isExistTarefaDataHora = await TarefaModel.findOne( 
                 { 
                     "dataHoraExecucao": {"$eq": new Date(dataHoraExecucao)}, 
